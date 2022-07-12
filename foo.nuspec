@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+	<metadata>
+		<id>foo</id>
+		<version>0.0.1</version>
+		<authors>Petru</authors>
+		<owners>Unknown</owners>
+		<description></description>
+		<releaseNotes></releaseNotes>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<copyright>(c) Petru. All rights reserved.</copyright>
+		<tags>PSModule</tags>
+		<dependencies>
+				
+		</dependencies>
+	</metadata>
+</package>
