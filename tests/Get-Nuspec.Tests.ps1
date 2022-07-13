@@ -15,12 +15,8 @@ Describe 'has expected parameters' -ForEach @(
 	@{Parameter = 'DestinationFolder'; Type = [string]; Mandatory = $false }
 ) {
 	It 'has expected parameters' {
-		if ($mandatory) {
-			Get-Command fnStateChangingDemo | Should -HaveParameter $parameter -Type $type -Mandatory
-		}
-		else {
-			Get-Command fnStateChangingDemo | Should -HaveParameter $parameter -Type $type
-		}
+		$params = @{ Mandatory = $mandatory }
+		Get-Command fnStateChangingDemo | Should -HaveParameter $parameter @params 
 	}
 }
 
