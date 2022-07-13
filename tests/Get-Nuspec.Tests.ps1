@@ -1,13 +1,9 @@
 #Requires -Modules Pscx
 #Requires -Version 5.0
-function Get-Nuspec {
-	. "${PSScriptRoot}\..\src\Get-Nuspec.ps1" @args
-}
 
 BeforeAll {
-	$GetNuspecScript = "${PSScriptRoot}\..\src\Get-Nuspec.ps1"
-
-	Set-Item function:fnStateChangingDemo ([ScriptBlock]::Create((Get-Content -Raw $GetNuspecScript)))
+	$GetNuspecScriptPath = "${PSScriptRoot}\..\src\Get-Nuspec.ps1"
+	function Get-Nuspec { . $GetNuspecScriptPath @args }
 }
 
 Describe 'has expected parameters' -ForEach @(
@@ -15,7 +11,7 @@ Describe 'has expected parameters' -ForEach @(
 	@{Parameter = 'DestinationFolder'; Type = [string]; Mandatory = $false }
 ) {
 	It 'has expected parameters' {
-		Get-Command fnStateChangingDemo | Should -HaveParameter $parameter -Mandatory:$mandatory 
+		Get-Command $GetNuspecScriptPath | Should -HaveParameter $parameter -Mandatory:$mandatory 
 	}
 }
 
@@ -27,7 +23,7 @@ Describe 'Create nuspec from an existing file' {
 		$SchemaPath = "${PSScriptRoot}\..\resources\nuspec.xsd"
 
 		New-ModuleManifest -Path $ManifestPath
-		fnStateChangingDemo -ManifestPath $ManifestPath -DestinationFolder $NuspecPath
+		Get-Nuspec -ManifestPath $ManifestPath -DestinationFolder $NuspecPath
 	}
 	It 'Check nuspec file' {
 		Test-Xml -Path $NuspecFile -SchemaPath $SchemaPath | Should -BeTrue
@@ -42,7 +38,7 @@ Describe 'Default localtion for NuSpec' -ForEach @(
 ) {
 	BeforeAll {
 		New-ModuleManifest -Path $ManifestPath
-		fnStateChangingDemo -ManifestPath $ManifestPath
+		Get-Nuspec -ManifestPath $ManifestPath
 	}
 
 	It 'File was created' {
@@ -65,6 +61,6 @@ Describe 'Default localtion for NuSpec' -ForEach @(
 Describe 'Invalid manifest' {
 	It "Thows if the the manifest doesn't exist" {
 		$ManifestPath = 'TestDrive:/non-existing-manifest.psd1'
-		# . $GetNuspecScript -ManifestPath $ManifestPath
+		# . $GetNuspecScriptPath -ManifestPath $ManifestPath
 	}
 }
