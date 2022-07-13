@@ -23,10 +23,20 @@ Describe 'Create nuspec from an existing file' {
 		$SchemaPath = "${PSScriptRoot}\..\resources\nuspec.xsd"
 
 		New-ModuleManifest -Path $ManifestPath
-		Get-Nuspec -ManifestPath $ManifestPath -DestinationFolder $NuspecPath
+		Get-Nuspec `
+			-ManifestPath $ManifestPath `
+			-DestinationFolder $NuspecPath `
+			-ErrorAction Ignore
 	}
 	It 'Check nuspec file' {
 		Test-Xml -Path $NuspecFile -SchemaPath $SchemaPath | Should -BeTrue
+	}
+	AfterAll {
+		Remove-Item `
+			-Path $ManifestPath, $NuspecFile `
+			-Recurse `
+			-Force `
+			-ErrorAction Ignore
 	}
 }
 
@@ -38,7 +48,7 @@ Describe 'Default localtion for NuSpec' -ForEach @(
 ) {
 	BeforeAll {
 		New-ModuleManifest -Path $ManifestPath
-		Get-Nuspec -ManifestPath $ManifestPath
+		Get-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore
 	}
 
 	It 'File was created' {
@@ -59,8 +69,64 @@ Describe 'Default localtion for NuSpec' -ForEach @(
 }
 
 Describe 'Invalid manifest' {
-	It "Thows if the the manifest doesn't exist" {
-		$ManifestPath = 'TestDrive:/non-existing-manifest.psd1'
-		# . $GetNuspecScriptPath -ManifestPath $ManifestPath
+	It "Thows if the manifest doesn't exist" {
+		$ManifestPath = 'TestDrive:\non-existing-manifest.psd1'
+		{ Get-Nuspec -ManifestPath $ManifestPath } | Should -Throw 
+	}
+
+	Describe 'Throws for non *.psd1 file' {
+		BeforeAll {
+			$ManifestPath = 'TestDrive:\non-existing-manifest.txt'
+			New-Item -Path $ManifestPath -ItemType File
+		} 
+		
+		It 'Throws for non valid manifest file' {
+			{ Get-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore } | Should -Throw 
+		}
+
+		AfterAll {
+			Remove-Item `
+				-Path $ManifestPath `
+				-Recurse `
+				-Force `
+				-ErrorAction Ignore
+		}
+	}
+
+	Describe 'Throws for invalid *.psd1 file' {
+		BeforeAll {
+			$ManifestPath = 'TestDrive:\foo.psd1'
+			New-Item -Path $ManifestPath -ItemType File
+		} 
+		
+		It 'Throws for non valid manifest file' {
+			{ Get-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore } | Should -Throw 
+		}
+
+		AfterAll {
+			Remove-Item `
+				-Path $ManifestPath `
+				-Recurse `
+				-Force `
+				-ErrorAction Ignore
+		}
+	}
+
+	Describe "Thows if destination folder doesn't exist" {
+		BeforeAll {
+			$ManifestPath = 'TestDrive:\foo.psd1'
+			New-ModuleManifest -Path $ManifestPath
+		}
+		It "Thows if destination folder doesn't exist" {
+			{ Get-Nuspec -ManifestPath $ManifestPath -DestinationFolder 'TestDrive:\non-existing-folder' } | Should -Throw 
+		}
+
+		AfterAll {
+			Remove-Item `
+				-Path $ManifestPath `
+				-Force `
+				-Recurse `
+				-ErrorAction Ignore
+		}
 	}
 }
