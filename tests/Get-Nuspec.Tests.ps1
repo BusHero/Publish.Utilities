@@ -20,5 +20,16 @@ Describe 'has expected parameters' -ForEach @(
 }
 
 Describe 'Create nuspec from an existing file' {
-	It ''
+	BeforeAll {
+		$ManifestPath = "TestDrive:\foo.psd1"
+		$NuspecPath = "TestDrive:\"
+		$NuspecFile = "${NuspecPath}\foo.nuspec"
+		$SchemaPath = "${PSScriptRoot}\..\resources\nuspec.xsd"
+
+		New-ModuleManifest -Path $ManifestPath
+		fnStateChangingDemo -ManifestPath $ManifestPath -DestinationFolder $NuspecPath
+	}
+	It 'Check nuspec file' {
+		Test-Xml -Path $NuspecFile -SchemaPath $SchemaPath | Should -BeTrue
+	}
 }
