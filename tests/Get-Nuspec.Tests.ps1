@@ -130,3 +130,79 @@ Describe 'Invalid manifest' {
 		}
 	}
 }
+
+Describe 'Generated nuspec contains the right data' {
+	Describe 'Default values' {
+		BeforeAll {
+			$FileName = 'foo'
+			$ManifestPath = "TestDrive:\${FileName}.psd1"
+			$NuspecPath = "TestDrive:\${FileName}.nuspec"
+			
+			New-ModuleManifest -Path $ManifestPath -Author $Author
+			
+			New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore
+			[xml]$nuspecXml = Get-Content -Path $NuspecPath
+		}
+		It 'Id' {
+			$nuspecXml.package.metadata.id | Should -Be $FileName
+		}
+		It 'Version' {
+			$nuspecXml.package.metadata.version | Should -Be '0.0.1'
+		}
+		It 'Authors' {
+			$nuspecXml.package.metadata.authors | Should -Be $env:USERNAME
+		}
+		It 'Owners' {
+			$nuspecXml.package.metadata.owners | Should -Be 'Unknown'
+		}
+		It 'Description' {
+			$nuspecXml.package.metadata.description | Should -Be '' 
+		}
+		It 'releaseNotes' {
+			$nuspecXml.package.metadata.releaseNotes | Should -Be ''
+		}
+		It 'requireLicenseAcceptance' {
+			$nuspecXml.package.metadata.requireLicenseAcceptance | Should -Be 'false'
+		}
+		It 'copyright' {
+			$nuspecXml.package.metadata.copyright | Should -Be "(c) ${env:USERNAME}. All rights reserved."
+		}
+		It 'tags' {
+			$nuspecXml.package.metadata.tags | Should -Be 'PSModule'
+		}
+		It 'dependencies' {
+			$nuspecXml.package.metadata.dependencies | Should -Be ''
+		}
+
+		AfterAll {
+			Remove-Item `
+				-Path $ManifestPath, $NuspecPath `
+				-Recurse `
+				-Force `
+				-ErrorAction Ignore
+		}
+	}
+	Describe 'Generated nuspec contains the specified author' {
+		BeforeAll {
+			$ManifestPath = 'TestDrive:\foo.psd1'
+			$NuspecPath = 'TestDrive:\foo.nuspec'
+			$Author = 'bus1hero'
+			New-ModuleManifest -Path $ManifestPath -Author $Author
+				
+			New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore
+			[xml]$nuspecXml = Get-Content -Path $NuspecPath
+		}
+
+		It 'Generated Nuspec contains expected author' {
+			$nuspecXml.package.metadata.authors | Should -Be $Author
+		}
+			
+		AfterAll {
+			Remove-Item `
+				-Path $ManifestPath, $NuspecPath `
+				-Recurse `
+				-Force `
+				-ErrorAction Ignore
+		}
+	}
+}
