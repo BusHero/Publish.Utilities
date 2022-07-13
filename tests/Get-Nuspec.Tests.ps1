@@ -2,8 +2,8 @@
 #Requires -Version 5.0
 
 BeforeAll {
-	$GetNuspecScriptPath = "${PSScriptRoot}\..\src\Get-Nuspec.ps1"
-	function Get-Nuspec { . $GetNuspecScriptPath @args }
+	$NewNuspecScriptPath = "${PSScriptRoot}\..\src\New-Nuspec.ps1"
+	function New-Nuspec { . $NewNuspecScriptPath @args }
 }
 
 Describe 'has expected parameters' -ForEach @(
@@ -11,7 +11,7 @@ Describe 'has expected parameters' -ForEach @(
 	@{Parameter = 'DestinationFolder'; Type = [string]; Mandatory = $false }
 ) {
 	It 'has expected parameters' {
-		Get-Command $GetNuspecScriptPath | Should -HaveParameter $parameter -Mandatory:$mandatory 
+		Get-Command $NewNuspecScriptPath | Should -HaveParameter $parameter -Mandatory:$mandatory 
 	}
 }
 
@@ -23,7 +23,7 @@ Describe 'Create nuspec from an existing file' {
 		$SchemaPath = "${PSScriptRoot}\..\resources\nuspec.xsd"
 
 		New-ModuleManifest -Path $ManifestPath
-		Get-Nuspec `
+		New-Nuspec `
 			-ManifestPath $ManifestPath `
 			-DestinationFolder $NuspecPath `
 			-ErrorAction Ignore
@@ -48,7 +48,7 @@ Describe 'Default localtion for NuSpec' -ForEach @(
 ) {
 	BeforeAll {
 		New-ModuleManifest -Path $ManifestPath
-		Get-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore
+		New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore
 	}
 
 	It 'File was created' {
@@ -71,7 +71,7 @@ Describe 'Default localtion for NuSpec' -ForEach @(
 Describe 'Invalid manifest' {
 	It "Thows if the manifest doesn't exist" {
 		$ManifestPath = 'TestDrive:\non-existing-manifest.psd1'
-		{ Get-Nuspec -ManifestPath $ManifestPath } | Should -Throw 
+		{ New-Nuspec -ManifestPath $ManifestPath } | Should -Throw 
 	}
 
 	Describe 'Throws for non *.psd1 file' {
@@ -81,7 +81,7 @@ Describe 'Invalid manifest' {
 		} 
 		
 		It 'Throws for non valid manifest file' {
-			{ Get-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore } | Should -Throw 
+			{ New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore } | Should -Throw 
 		}
 
 		AfterAll {
@@ -100,7 +100,7 @@ Describe 'Invalid manifest' {
 		} 
 		
 		It 'Throws for non valid manifest file' {
-			{ Get-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore } | Should -Throw 
+			{ New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore } | Should -Throw 
 		}
 
 		AfterAll {
@@ -118,7 +118,7 @@ Describe 'Invalid manifest' {
 			New-ModuleManifest -Path $ManifestPath
 		}
 		It "Thows if destination folder doesn't exist" {
-			{ Get-Nuspec -ManifestPath $ManifestPath -DestinationFolder 'TestDrive:\non-existing-folder' } | Should -Throw 
+			{ New-Nuspec -ManifestPath $ManifestPath -DestinationFolder 'TestDrive:\non-existing-folder' } | Should -Throw 
 		}
 
 		AfterAll {
