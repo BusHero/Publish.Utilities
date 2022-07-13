@@ -170,10 +170,39 @@ Describe 'Generated nuspec contains the right data' {
 		It 'tags' {
 			$nuspecXml.package.metadata.tags | Should -Be 'PSModule'
 		}
-		It 'dependencies' {
-			$nuspecXml.package.metadata.dependencies | Should -Be ''
+		It 'title' {
+			$nuspecXml.package.metadata.title | Should -Be $null
 		}
-
+		It 'licenseUrl' {
+			$nuspecXml.package.metadata.licenseUrl | Should -Be $null
+		}
+		It 'projectUrl' {
+			$nuspecXml.package.metadata.projectUrl | Should -Be $null
+		}
+		It 'iconUrl' {
+			$nuspecXml.package.metadata.iconUrl | Should -Be $null
+		}
+		It 'developmentDependency' {
+			$nuspecXml.package.metadata.developmentDependency | Should -Be $null
+		}
+		It 'summary' {
+			$nuspecXml.package.metadata.summary | Should -Be $null
+		}
+		It 'language' {
+			$nuspecXml.package.metadata.language | Should -Be $null
+		}
+		It 'serviceable' {
+			$nuspecXml.package.metadata.serviceable | Should -Be $null
+		}
+		It 'icon' {
+			$nuspecXml.package.metadata.icon | Should -Be $null
+		}
+		It 'readme' {
+			$nuspecXml.package.metadata.readme | Should -Be $null
+		}
+		It 'repository' {
+			$nuspecXml.package.metadata.repository | Should -Be $null
+		}
 		AfterAll {
 			Remove-Item `
 				-Path $ManifestPath, $NuspecPath `
