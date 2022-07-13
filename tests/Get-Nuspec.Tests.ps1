@@ -203,6 +203,27 @@ Describe 'Generated nuspec contains the right data' {
 		It 'repository' {
 			$nuspecXml.package.metadata.repository | Should -Be $null
 		}
+		It 'repository' {
+			$nuspecXml.package.metadata.repository | Should -Be $null
+		}
+		It 'license' {
+			$nuspecXml.package.metadata.license | Should -Be $null
+		}
+		It 'packageTypes' {
+			$nuspecXml.package.metadata.packageTypes | Should -Be $null
+		}
+		It 'frameworkAssemblies' {
+			$nuspecXml.package.metadata.frameworkAssemblies | Should -Be $null
+		}
+		It 'frameworkReferences' {
+			$nuspecXml.package.metadata.frameworkReferences | Should -Be $null
+		}
+		It 'references' {
+			$nuspecXml.package.metadata.references | Should -Be $null
+		}
+		It 'contentFiles' {
+			$nuspecXml.package.metadata.contentFiles | Should -Be $null
+		}
 		AfterAll {
 			Remove-Item `
 				-Path $ManifestPath, $NuspecPath `
