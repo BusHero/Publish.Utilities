@@ -340,6 +340,42 @@ Describe 'Generated nuspec contains the expected data' {
 		}
 	}
 
+	Describe 'license' {
+		BeforeAll {
+			$ManifestPath = 'TestDrive:\foo.psd1'
+			$NuspecPath = 'TestDrive:\foo.nuspec'
+			$ProjectUrl = 'https://example.com/'
+			
+			New-ModuleManifest -Path $ManifestPath -ProjectUri $ProjectUrl
+			New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore 	
+			[xml]$NuspecXml = Get-Content -Path $NuspecPath
+		}
+		
+		It 'URL is right' {
+			$NuspecXml.package.metadata.repository.url | Should -Be $ProjectUrl
+		}
+
+		It 'type is git' {
+			$NuspecXml.package.metadata.repository.type | Should -Be 'git'
+		}
+
+		It 'branch is $null' {
+			$NuspecXml.package.metadata.repository.branch | Should -Be $null
+		}
+
+		It 'commit is $null' {
+			$nuspecXml.package.metadata.repository.commit | Should -Be $null
+		}
+
+		AfterAll {
+			Remove-Item `
+				-Path $ManifestPath, $NuspecPath `
+				-Recurse `
+				-Force `
+				-ErrorAction Ignore
+		}
+	}
+
 	Describe 'property' -ForEach @(
 		@{ Property = @{ Author = 'bus1hero' }; NuspecProperty = 'authors'; ExpectedValue = 'bus1hero' }
 		@{ Property = @{ ModuleVersion = '1.0.0' }; NuspecProperty = 'Version'; ExpectedValue = '1.0.0' }
@@ -377,7 +413,6 @@ Describe 'Generated nuspec contains the expected data' {
 		}
 
 		It '<NuspecProperty>' {
-
 			$nuspecXml.package.metadata.$NuspecProperty | Should -Be $expectedValue
 		}
 			
