@@ -1,4 +1,4 @@
-#Requires -Modules Pscx
+#Requires -Modules Pscx, Pester
 #Requires -Version 5.0
 
 BeforeAll {
