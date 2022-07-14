@@ -131,7 +131,7 @@ Describe 'Invalid manifest' {
 	}
 }
 
-Describe 'Generated nuspec contains the right data' {
+Describe 'Generated nuspec contains the expected data' {
 	Describe 'Default values' {
 		BeforeAll {
 			$FileName = 'foo'
@@ -340,7 +340,7 @@ Describe 'Generated nuspec contains the right data' {
 		}
 	}
 
-	Describe 'Generated nuspec contains the specified author' -ForEach @(
+	Describe 'property' -ForEach @(
 		@{ Property = @{ Author = 'bus1hero' }; NuspecProperty = 'authors'; ExpectedValue = 'bus1hero' }
 		@{ Property = @{ ModuleVersion = '1.0.0' }; NuspecProperty = 'Version'; ExpectedValue = '1.0.0' }
 		# @{ Property = @{ owners = 'owners' }; NuspecProperty = 'owners' }
@@ -359,8 +359,7 @@ Describe 'Generated nuspec contains the right data' {
 		# @{ Property = @{ serviceable = 'serviceable' }; NuspecProperty = 'serviceable' }
 		# @{ Property = @{ icon = 'icon' }; NuspecProperty = 'icon' }
 		# @{ Property = @{ readme = 'readme' }; NuspecProperty = 'readme' }
-		# @{ Property = @{ repository = 'repository' }; NuspecProperty = 'repository' }
-		# @{ Property = @{ repository = 'repository' }; NuspecProperty = 'repository' }
+		# @{ Property = @{ ProjectUri = 'https://example.com/' }; NuspecProperty = 'repository'; ExpectedValue = 'https://example.com/' }
 		# @{ Property = @{ license = 'license' }; NuspecProperty = 'license' }
 		# @{ Property = @{ packageTypes = 'packageTypes' }; NuspecProperty = 'packageTypes' }
 		# @{ Property = @{ frameworkAssemblies = 'frameworkAssemblies' }; NuspecProperty = 'frameworkAssemblies' }
@@ -377,7 +376,8 @@ Describe 'Generated nuspec contains the right data' {
 			[xml]$nuspecXml = Get-Content -Path $NuspecPath
 		}
 
-		It 'Generated Nuspec contains expected <NuspecProperty>' {
+		It '<NuspecProperty>' {
+
 			$nuspecXml.package.metadata.$NuspecProperty | Should -Be $expectedValue
 		}
 			
