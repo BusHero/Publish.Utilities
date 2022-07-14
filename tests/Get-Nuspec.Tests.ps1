@@ -133,8 +133,10 @@ Describe 'Invalid manifest' {
 
 Describe 'Generated nuspec contains the right data' {
 	Describe 'Default values' {
+		BeforeDiscovery {
+			$global:FileName = 'foo'
+		}
 		BeforeAll {
-			$FileName = 'foo'
 			$ManifestPath = "TestDrive:\${FileName}.psd1"
 			$NuspecPath = "TestDrive:\${FileName}.nuspec"
 			
@@ -144,11 +146,8 @@ Describe 'Generated nuspec contains the right data' {
 			[xml]$nuspecXml = Get-Content -Path $NuspecPath
 		}
 
-		It 'Id should be ' {
-			$nuspecXml.package.metadata.id | Should -Be $FileName
-		}
-
 		It '<property> should be <value>' -TestCases @(
+			@{ Property = 'Id'; Value = $FileName }
 			@{ Property = 'Version'; Value = '0.0.1' }
 			@{ Property = 'authors'; Value = $env:USERNAME }
 			@{ Property = 'owners'; Value = 'Unknown' }
@@ -178,7 +177,7 @@ Describe 'Generated nuspec contains the right data' {
 		) {
 			$nuspecXml.package.metadata.$property | Should -Be $value
 		}
-		
+
 		AfterAll {
 			Remove-Item `
 				-Path $ManifestPath, $NuspecPath `
