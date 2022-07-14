@@ -340,7 +340,7 @@ Describe 'Generated nuspec contains the expected data' {
 		}
 	}
 
-	Describe 'license' {
+	Describe 'repository' {
 		BeforeAll {
 			$ManifestPath = 'TestDrive:\foo.psd1'
 			$NuspecPath = 'TestDrive:\foo.nuspec'
