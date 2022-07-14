@@ -311,7 +311,7 @@ Describe 'Generated nuspec contains the right data' {
 				}
 			}
 		}
-		
+
 		Describe 'Invalid license' -ForEach @(
 			@{Params = @{ LicenseUri = 'https://example.com'; RequireLicenseAcceptance = $true } }
 			@{Params = @{ RequireLicenseAcceptance = $true } }
