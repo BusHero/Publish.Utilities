@@ -149,7 +149,6 @@ Describe 'Generated nuspec contains the right data' {
 		}
 
 		It '<property> should be <value>' -TestCases @(
-			@{ Property = 'Id'; Value = $FileName }
 			@{ Property = 'Version'; Value = '0.0.1' }
 			@{ Property = 'authors'; Value = $env:USERNAME }
 			@{ Property = 'owners'; Value = 'Unknown' }
@@ -189,19 +188,75 @@ Describe 'Generated nuspec contains the right data' {
 		}
 	}
 
-	Describe 'Generated nuspec contains the specified author' {
+	Describe 'Tags are generated correctly' -ForEach @(
+		@{ Params = @{ Tags = 'foo', 'bar' }; Tags = 'foo', 'bar', 'PSModule' }
+		@{ Params = @{ Tags = 'foo', 'foo' }; Tags = 'foo', 'PSModule' }
+		# @{ Params = @{ Tags = 'foo', 'bar', 'PSModule' }; Tags = 'foo', 'bar', 'PSModule' }
+	) {
 		BeforeAll {
 			$ManifestPath = 'TestDrive:\foo.psd1'
 			$NuspecPath = 'TestDrive:\foo.nuspec'
-			$Author = 'bus1hero'
-			New-ModuleManifest -Path $ManifestPath -Author $Author
+
+			New-ModuleManifest -Path $ManifestPath @params
+			New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore
+
+			[xml]$nuspecXml = Get-Content -Path $NuspecPath
+		}
+		
+		It 'Generated nuspec file contains "<tags>" tags' {
+			$nuspecXml.package.metadata.tags -split ' ' | Sort-Object | Should -Be @($tags | Sort-Object)
+		}
+
+		AfterAll {
+			Remove-Item `
+				-Path $ManifestPath, $NuspecPath `
+				-Recurse `
+				-Force `
+				-ErrorAction Ignore
+		}
+	}
+
+	Describe 'Generated nuspec contains the specified author' -ForEach @(
+		@{ Property = @{ Author = 'bus1hero' }; NuspecProperty = 'authors'; ExpectedValue = 'bus1hero' }
+		# @{ Property = @{ Id = 'Id' }; NuspecProperty = 'Id' }
+		# @{ Property = @{ Version = 'Version' }; NuspecProperty = 'Version' }
+		# @{ Property = @{ authors = 'authors' }; NuspecProperty = 'authors' }
+		# @{ Property = @{ owners = 'owners' }; NuspecProperty = 'owners' }
+		# @{ Property = @{ description = 'description' }; NuspecProperty = 'description' }
+		# @{ Property = @{ releaseNotes = 'releaseNotes' }; NuspecProperty = 'releaseNotes' }
+		# @{ Property = @{ requireLicenseAcceptance = 'requireLicenseAcceptance' }; NuspecProperty = 'requireLicenseAcceptance' }
+		# @{ Property = @{ copyright = 'copyright' }; NuspecProperty = 'copyright' }
+		@{ Property = @{ Tags = 'foo', 'bar', 'baz' }; NuspecProperty = 'tags'; ExpectedValue = 'foo bar baz PSModule' }
+		# @{ Property = @{ title = 'title' }; NuspecProperty = 'title' }
+		# @{ Property = @{ licenseUrl = 'licenseUrl' }; NuspecProperty = 'licenseUrl' }
+		# @{ Property = @{ projectUrl = 'projectUrl' }; NuspecProperty = 'projectUrl' }
+		# @{ Property = @{ iconUrl = 'iconUrl' }; NuspecProperty = 'iconUrl' }
+		# @{ Property = @{ developmentDependency = 'developmentDependency' }; NuspecProperty = 'developmentDependency' }
+		# @{ Property = @{ summary = 'summary' }; NuspecProperty = 'summary' }
+		# @{ Property = @{ language = 'language' }; NuspecProperty = 'language' }
+		# @{ Property = @{ serviceable = 'serviceable' }; NuspecProperty = 'serviceable' }
+		# @{ Property = @{ icon = 'icon' }; NuspecProperty = 'icon' }
+		# @{ Property = @{ readme = 'readme' }; NuspecProperty = 'readme' }
+		# @{ Property = @{ repository = 'repository' }; NuspecProperty = 'repository' }
+		# @{ Property = @{ repository = 'repository' }; NuspecProperty = 'repository' }
+		# @{ Property = @{ license = 'license' }; NuspecProperty = 'license' }
+		# @{ Property = @{ packageTypes = 'packageTypes' }; NuspecProperty = 'packageTypes' }
+		# @{ Property = @{ frameworkAssemblies = 'frameworkAssemblies' }; NuspecProperty = 'frameworkAssemblies' }
+		# @{ Property = @{ frameworkReferences = 'frameworkReferences' }; NuspecProperty = 'frameworkReferences' }
+		# @{ Property = @{ references = 'references' }; NuspecProperty = 'references' }
+		# @{ Property = @{ contentFiles = 'contentFiles' }; NuspecProperty = 'contentFiles' }
+	) {
+		BeforeAll {
+			$ManifestPath = 'TestDrive:\foo.psd1'
+			$NuspecPath = 'TestDrive:\foo.nuspec'
+			New-ModuleManifest -Path $ManifestPath @property
 				
 			New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore
 			[xml]$nuspecXml = Get-Content -Path $NuspecPath
 		}
 
-		It 'Generated Nuspec contains expected author' {
-			$nuspecXml.package.metadata.authors | Should -Be $Author
+		It 'Generated Nuspec contains expected <NuspecProperty>' {
+			$nuspecXml.package.metadata.$NuspecProperty | Should -Be $expectedValue
 		}
 			
 		AfterAll {
