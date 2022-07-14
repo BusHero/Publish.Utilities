@@ -413,33 +413,33 @@ function New-NuSpecFile {
 	$nuspec = @"
 <?xml version="1.0"?>
 <package >
-		<metadata>
-				<id>$(Get-EscapedString -ElementValue "$Name")</id>
-				<version>$($Version)</version>
-				<authors>$(Get-EscapedString -ElementValue "$Author")</authors>
-				<owners>$(Get-EscapedString -ElementValue "$CompanyName")</owners>
-				<description>$(Get-EscapedString -ElementValue "$Description")</description>
-				<releaseNotes>$(Get-EscapedString -ElementValue "$ReleaseNotes")</releaseNotes>
-				<requireLicenseAcceptance>$($requireLicenseAcceptance.ToString())</requireLicenseAcceptance>
-				<copyright>$(Get-EscapedString -ElementValue "$Copyright")</copyright>
-				<tags>$(if($Tags){ Get-EscapedString -ElementValue (@($Tags | Select-Object -Unique) -join ' ')})</tags>
-				$(if($LicenseUri)
-{
-				"<licenseUrl>$(Get-EscapedString -ElementValue "$LicenseUri")</licenseUrl>"
-})
-				$(if($ProjectUri)
-{
-				"<projectUrl>$(Get-EscapedString -ElementValue "$ProjectUri")</projectUrl>"
-				"<repository type='git' url='$(Get-EscapedString -ElementValue "$ProjectUri")'/>"
-})
-				$(if($IconUri)
-{
-				"<iconUrl>$(Get-EscapedString -ElementValue "$IconUri")</iconUrl>"
-})
-				<dependencies>
-						$dependencies
-				</dependencies>
-		</metadata>
+	<metadata>
+		<id>$(Get-EscapedString -ElementValue "$Name")</id>
+		<version>$($Version)</version>
+		<authors>$(Get-EscapedString -ElementValue "$Author")</authors>
+		<owners>$(Get-EscapedString -ElementValue "$CompanyName")</owners>
+		<description>$(Get-EscapedString -ElementValue "$Description")</description>
+		<releaseNotes>$(Get-EscapedString -ElementValue "$ReleaseNotes")</releaseNotes>
+		<requireLicenseAcceptance>$($requireLicenseAcceptance.ToString())</requireLicenseAcceptance>
+		<copyright>$(Get-EscapedString -ElementValue "$Copyright")</copyright>
+		<tags>$(if($Tags){ Get-EscapedString -ElementValue (@($Tags | Select-Object -Unique) -join ' ')})</tags>
+		$(if($LicenseUri)
+		{
+		"<licenseUrl>$(Get-EscapedString -ElementValue "$LicenseUri")</licenseUrl>"
+		})
+		$(if($ProjectUri)
+		{
+		"<projectUrl>$(Get-EscapedString -ElementValue "$ProjectUri")</projectUrl>"
+		"<repository type='git' url='$(Get-EscapedString -ElementValue "$ProjectUri")'/>"
+		})
+		$(if($IconUri)
+		{
+		"<iconUrl>$(Get-EscapedString -ElementValue "$IconUri")</iconUrl>"
+		})
+		<dependencies>
+			$dependencies
+		</dependencies>
+	</metadata>
 </package>
 "@
 

@@ -191,7 +191,6 @@ Describe 'Generated nuspec contains the right data' {
 	Describe 'Tags are generated correctly' -ForEach @(
 		@{ Params = @{ Tags = 'foo', 'bar' }; Tags = 'foo', 'bar', 'PSModule' }
 		@{ Params = @{ Tags = 'foo', 'foo' }; Tags = 'foo', 'PSModule' }
-		# @{ Params = @{ Tags = 'foo', 'bar', 'PSModule' }; Tags = 'foo', 'bar', 'PSModule' }
 	) {
 		BeforeAll {
 			$ManifestPath = 'TestDrive:\foo.psd1'
@@ -218,15 +217,12 @@ Describe 'Generated nuspec contains the right data' {
 
 	Describe 'Generated nuspec contains the specified author' -ForEach @(
 		@{ Property = @{ Author = 'bus1hero' }; NuspecProperty = 'authors'; ExpectedValue = 'bus1hero' }
-		# @{ Property = @{ Id = 'Id' }; NuspecProperty = 'Id' }
-		# @{ Property = @{ Version = 'Version' }; NuspecProperty = 'Version' }
-		# @{ Property = @{ authors = 'authors' }; NuspecProperty = 'authors' }
+		@{ Property = @{ ModuleVersion = '1.0.0' }; NuspecProperty = 'Version'; ExpectedValue = '1.0.0' }
 		# @{ Property = @{ owners = 'owners' }; NuspecProperty = 'owners' }
-		# @{ Property = @{ description = 'description' }; NuspecProperty = 'description' }
+		@{ Property = @{ description = 'Some description here and there' }; NuspecProperty = 'description'; ExpectedValue = 'Some description here and there' }
 		# @{ Property = @{ releaseNotes = 'releaseNotes' }; NuspecProperty = 'releaseNotes' }
 		# @{ Property = @{ requireLicenseAcceptance = 'requireLicenseAcceptance' }; NuspecProperty = 'requireLicenseAcceptance' }
 		# @{ Property = @{ copyright = 'copyright' }; NuspecProperty = 'copyright' }
-		@{ Property = @{ Tags = 'foo', 'bar', 'baz' }; NuspecProperty = 'tags'; ExpectedValue = 'foo bar baz PSModule' }
 		# @{ Property = @{ title = 'title' }; NuspecProperty = 'title' }
 		# @{ Property = @{ licenseUrl = 'licenseUrl' }; NuspecProperty = 'licenseUrl' }
 		# @{ Property = @{ projectUrl = 'projectUrl' }; NuspecProperty = 'projectUrl' }
