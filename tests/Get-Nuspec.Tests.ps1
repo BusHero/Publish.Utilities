@@ -222,11 +222,11 @@ Describe 'Generated nuspec contains the right data' {
 		@{ Property = @{ description = 'Some description here and there' }; NuspecProperty = 'description'; ExpectedValue = 'Some description here and there' }
 		# @{ Property = @{ releaseNotes = 'releaseNotes' }; NuspecProperty = 'releaseNotes' }
 		# @{ Property = @{ requireLicenseAcceptance = 'requireLicenseAcceptance' }; NuspecProperty = 'requireLicenseAcceptance' }
-		# @{ Property = @{ copyright = 'copyright' }; NuspecProperty = 'copyright' }
+		@{ Property = @{ copyright = 'copyright' }; NuspecProperty = 'copyright'; ExpectedValue = 'copyright' }
 		# @{ Property = @{ title = 'title' }; NuspecProperty = 'title' }
-		# @{ Property = @{ licenseUrl = 'licenseUrl' }; NuspecProperty = 'licenseUrl' }
-		# @{ Property = @{ projectUrl = 'projectUrl' }; NuspecProperty = 'projectUrl' }
-		# @{ Property = @{ iconUrl = 'iconUrl' }; NuspecProperty = 'iconUrl' }
+		@{ Property = @{ LicenseUri = 'https://example.com/' }; NuspecProperty = 'licenseUrl'; ExpectedValue = 'https://example.com/' }
+		@{ Property = @{ projectUri = 'https://example.com/' }; NuspecProperty = 'projectUrl'; ExpectedValue = 'https://example.com/' }
+		@{ Property = @{ iconUri = 'https://example.com/' }; NuspecProperty = 'https://example.com/' }
 		# @{ Property = @{ developmentDependency = 'developmentDependency' }; NuspecProperty = 'developmentDependency' }
 		# @{ Property = @{ summary = 'summary' }; NuspecProperty = 'summary' }
 		# @{ Property = @{ language = 'language' }; NuspecProperty = 'language' }
