@@ -215,13 +215,73 @@ Describe 'Generated nuspec contains the right data' {
 		}
 	}
 
+	Describe 'Check license' {
+		Describe 'Valid license' {
+			BeforeAll {
+				$FileName = 'foo'
+				$ManifestPath = "TestDrive:\${FileName}.psd1"
+				$NuspecPath = "TestDrive:\${FileName}.nuspec"
+				$LicenseFile = "$TestDrive/license.txt"
+				$LicenseUri = "file:///${LicenseFile}".Replace('\', '/')
+				
+				Out-File -FilePath $LicenseFile -Encoding utf8 -InputObject 'Some license here and there'
+				New-ModuleManifest -Path $ManifestPath -LicenseUri $LicenseUri -RequireLicenseAcceptance
+				New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore
+				[xml]$nuspecXml = Get-Content -Path $NuspecPath
+			}
+			
+			It 'license property is <licenseUri>' {
+				$nuspecXml.package.metadata.licenseUrl | Should -Be $LicenseUri
+			}
+			
+			It 'RequireLicenseAcceptance is true' {
+				$nuspecXml.package.metadata.RequireLicenseAcceptance | Should -Be 'true'
+			}
+
+			AfterAll {
+				Remove-Item `
+					-Path $ManifestPath, $LicenseFile `
+					-Recurse `
+					-Force `
+					-ErrorAction Ignore
+			}
+		}
+		Describe 'Invalid license' -ForEach @(
+			@{Params = @{ LicenseUri = 'https://example.com'; RequireLicenseAcceptance = $true } }
+			@{Params = @{ RequireLicenseAcceptance = $true } }
+			@{Params = @{ LicenseUri = 'file:///TestDrive:non-existing-license-file.txt'; RequireLicenseAcceptance = $true } }
+		) {
+			BeforeAll {
+				$ManifestPath = 'TestDrive:\foo.psd1'
+				New-ModuleManifest `
+					-Path $ManifestPath `
+					@params
+			}
+			
+			It 'Throw for non valid license file' {
+				{ New-Nuspec `
+						-ManifestPath $ManifestPath `
+						-ErrorAction Ignore } | Should -Throw
+			}
+
+			AfterAll {
+				Remove-Item `
+					-Path $ManifestPath `
+					-Force `
+					-Recurse `
+					-ErrorAction Ignore
+			}
+		}
+	}
+
 	Describe 'Generated nuspec contains the specified author' -ForEach @(
 		@{ Property = @{ Author = 'bus1hero' }; NuspecProperty = 'authors'; ExpectedValue = 'bus1hero' }
 		@{ Property = @{ ModuleVersion = '1.0.0' }; NuspecProperty = 'Version'; ExpectedValue = '1.0.0' }
 		# @{ Property = @{ owners = 'owners' }; NuspecProperty = 'owners' }
 		@{ Property = @{ description = 'Some description here and there' }; NuspecProperty = 'description'; ExpectedValue = 'Some description here and there' }
 		# @{ Property = @{ releaseNotes = 'releaseNotes' }; NuspecProperty = 'releaseNotes' }
-		# @{ Property = @{ requireLicenseAcceptance = 'requireLicenseAcceptance' }; NuspecProperty = 'requireLicenseAcceptance' }
+		# @{ Property = @{ LicenseUri = 'https://example.com/'; requireLicenseAcceptance = $false }; NuspecProperty = 'requireLicenseAcceptance'; ExpectedValue = 'false' }
+		# @{ Property = @{ LicenseUri = 'https://example.com/'; requireLicenseAcceptance = $true }; NuspecProperty = 'requireLicenseAcceptance'; ExpectedValue = 'true' }
 		@{ Property = @{ copyright = 'copyright' }; NuspecProperty = 'copyright'; ExpectedValue = 'copyright' }
 		# @{ Property = @{ title = 'title' }; NuspecProperty = 'title' }
 		@{ Property = @{ LicenseUri = 'https://example.com/' }; NuspecProperty = 'licenseUrl'; ExpectedValue = 'https://example.com/' }
