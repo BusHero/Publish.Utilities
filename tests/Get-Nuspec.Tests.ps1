@@ -215,37 +215,103 @@ Describe 'Generated nuspec contains the right data' {
 		}
 	}
 
-	Describe 'Check license' {
+	Describe 'license' {
 		Describe 'Valid license' {
-			BeforeAll {
-				$FileName = 'foo'
-				$ManifestPath = "TestDrive:\${FileName}.psd1"
-				$NuspecPath = "TestDrive:\${FileName}.nuspec"
-				$LicenseFile = "$TestDrive/license.txt"
-				$LicenseUri = "file:///${LicenseFile}".Replace('\', '/')
-				
-				Out-File -FilePath $LicenseFile -Encoding utf8 -InputObject 'Some license here and there'
-				New-ModuleManifest -Path $ManifestPath -LicenseUri $LicenseUri -RequireLicenseAcceptance
-				New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore
-				[xml]$nuspecXml = Get-Content -Path $NuspecPath
-			}
+			Describe 'Empty license file' {
+				# TODO make the test case to fail
+				BeforeAll {
+					$FileName = 'foo'
+					$ManifestPath = "TestDrive:\${FileName}.psd1"
+					$NuspecPath = "TestDrive:\${FileName}.nuspec"
+					$LicenseFile = "$TestDrive/license.txt"
+					$LicenseUri = "file:///${LicenseFile}".Replace('\', '/')
+	
+					New-Item -Path $LicenseFile -ItemType File
+					New-ModuleManifest -Path $ManifestPath -LicenseUri $LicenseUri
+					New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore
+					[xml]$nuspecXml = Get-Content -Path $NuspecPath
+				}
+
+				It 'license property is <licenseUri>' {
+					$nuspecXml.package.metadata.licenseUrl | Should -Be $LicenseUri
+				}
 			
-			It 'license property is <licenseUri>' {
-				$nuspecXml.package.metadata.licenseUrl | Should -Be $LicenseUri
-			}
-			
-			It 'RequireLicenseAcceptance is true' {
-				$nuspecXml.package.metadata.RequireLicenseAcceptance | Should -Be 'true'
+				It 'RequireLicenseAcceptance is false' {
+					$nuspecXml.package.metadata.RequireLicenseAcceptance | Should -Be 'false'
+				}
+
+				AfterAll {
+					Remove-Item `
+						-Path $ManifestPath, $LicenseFile, $NuspecPath `
+						-Recurse `
+						-Force `
+						-ErrorAction Ignore
+				}
 			}
 
-			AfterAll {
-				Remove-Item `
-					-Path $ManifestPath, $LicenseFile `
-					-Recurse `
-					-Force `
-					-ErrorAction Ignore
+			Describe 'Non existing license file' {
+				# TODO make the test case to fail
+				BeforeAll {
+					$FileName = 'foo'
+					$ManifestPath = "TestDrive:\${FileName}.psd1"
+					$NuspecPath = "TestDrive:\${FileName}.nuspec"
+					$LicenseFile = "$TestDrive/license.txt"
+					$LicenseUri = "file:///${LicenseFile}".Replace('\', '/')
+	
+					New-ModuleManifest -Path $ManifestPath -LicenseUri $LicenseUri
+					New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore
+					[xml]$nuspecXml = Get-Content -Path $NuspecPath
+				}
+
+				It 'license property is <licenseUri>' {
+					$nuspecXml.package.metadata.licenseUrl | Should -Be $LicenseUri
+				}
+			
+				It 'RequireLicenseAcceptance is false' {
+					$nuspecXml.package.metadata.RequireLicenseAcceptance | Should -Be 'false'
+				}
+
+				AfterAll {
+					Remove-Item `
+						-Path $ManifestPath, $NuspecPath `
+						-Recurse `
+						-Force `
+						-ErrorAction Ignore
+				}
+			}
+
+			Describe 'Non empty license file' {
+				BeforeAll {
+					$FileName = 'foo'
+					$ManifestPath = "TestDrive:\${FileName}.psd1"
+					$NuspecPath = "TestDrive:\${FileName}.nuspec"
+					$LicenseFile = "$TestDrive/license.txt"
+					$LicenseUri = "file:///${LicenseFile}".Replace('\', '/')
+					
+					Out-File -FilePath $LicenseFile -Encoding utf8 -InputObject 'Some license here and there'
+					New-ModuleManifest -Path $ManifestPath -LicenseUri $LicenseUri -RequireLicenseAcceptance
+					New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore
+					[xml]$nuspecXml = Get-Content -Path $NuspecPath
+				}
+				
+				It 'license property is <licenseUri>' {
+					$nuspecXml.package.metadata.licenseUrl | Should -Be $LicenseUri
+				}
+			
+				It 'RequireLicenseAcceptance is true' {
+					$nuspecXml.package.metadata.RequireLicenseAcceptance | Should -Be 'true'
+				}
+
+				AfterAll {
+					Remove-Item `
+						-Path $ManifestPath, $LicenseFile `
+						-Recurse `
+						-Force `
+						-ErrorAction Ignore
+				}
 			}
 		}
+		
 		Describe 'Invalid license' -ForEach @(
 			@{Params = @{ LicenseUri = 'https://example.com'; RequireLicenseAcceptance = $true } }
 			@{Params = @{ RequireLicenseAcceptance = $true } }
