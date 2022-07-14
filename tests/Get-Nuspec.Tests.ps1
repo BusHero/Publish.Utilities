@@ -143,87 +143,42 @@ Describe 'Generated nuspec contains the right data' {
 			New-Nuspec -ManifestPath $ManifestPath -ErrorAction Ignore
 			[xml]$nuspecXml = Get-Content -Path $NuspecPath
 		}
-		It 'Id' {
+
+		It 'Id should be ' {
 			$nuspecXml.package.metadata.id | Should -Be $FileName
 		}
-		It 'Version' {
-			$nuspecXml.package.metadata.version | Should -Be '0.0.1'
+
+		It '<property> should be <value>' -TestCases @(
+			@{ Property = 'Version'; Value = '0.0.1' }
+			@{ Property = 'authors'; Value = $env:USERNAME }
+			@{ Property = 'owners'; Value = 'Unknown' }
+			@{ Property = 'description'; Value = '' }
+			@{ Property = 'releaseNotes'; Value = '' }
+			@{ Property = 'requireLicenseAcceptance'; Value = 'false' }
+			@{ Property = 'copyright'; Value = "(c) ${env:USERNAME}. All rights reserved." }
+			@{ Property = 'tags'; Value = 'PSModule' }
+			@{ Property = 'title'; Value = $null }
+			@{ Property = 'licenseUrl'; Value = $null }
+			@{ Property = 'projectUrl'; Value = $null }
+			@{ Property = 'iconUrl'; Value = $null }
+			@{ Property = 'developmentDependency'; Value = $null }
+			@{ Property = 'summary'; Value = $null }
+			@{ Property = 'language'; Value = $null }
+			@{ Property = 'serviceable'; Value = $null }
+			@{ Property = 'icon'; Value = $null }
+			@{ Property = 'readme'; Value = $null }
+			@{ Property = 'repository'; Value = $null }
+			@{ Property = 'repository'; Value = $null }
+			@{ Property = 'license'; Value = $null }
+			@{ Property = 'packageTypes'; Value = $null }
+			@{ Property = 'frameworkAssemblies'; Value = $null }
+			@{ Property = 'frameworkReferences'; Value = $null }
+			@{ Property = 'references'; Value = $null }
+			@{ Property = 'contentFiles'; Value = $null }
+		) {
+			$nuspecXml.package.metadata.$property | Should -Be $value
 		}
-		It 'Authors' {
-			$nuspecXml.package.metadata.authors | Should -Be $env:USERNAME
-		}
-		It 'Owners' {
-			$nuspecXml.package.metadata.owners | Should -Be 'Unknown'
-		}
-		It 'Description' {
-			$nuspecXml.package.metadata.description | Should -Be '' 
-		}
-		It 'releaseNotes' {
-			$nuspecXml.package.metadata.releaseNotes | Should -Be ''
-		}
-		It 'requireLicenseAcceptance' {
-			$nuspecXml.package.metadata.requireLicenseAcceptance | Should -Be 'false'
-		}
-		It 'copyright' {
-			$nuspecXml.package.metadata.copyright | Should -Be "(c) ${env:USERNAME}. All rights reserved."
-		}
-		It 'tags' {
-			$nuspecXml.package.metadata.tags | Should -Be 'PSModule'
-		}
-		It 'title' {
-			$nuspecXml.package.metadata.title | Should -Be $null
-		}
-		It 'licenseUrl' {
-			$nuspecXml.package.metadata.licenseUrl | Should -Be $null
-		}
-		It 'projectUrl' {
-			$nuspecXml.package.metadata.projectUrl | Should -Be $null
-		}
-		It 'iconUrl' {
-			$nuspecXml.package.metadata.iconUrl | Should -Be $null
-		}
-		It 'developmentDependency' {
-			$nuspecXml.package.metadata.developmentDependency | Should -Be $null
-		}
-		It 'summary' {
-			$nuspecXml.package.metadata.summary | Should -Be $null
-		}
-		It 'language' {
-			$nuspecXml.package.metadata.language | Should -Be $null
-		}
-		It 'serviceable' {
-			$nuspecXml.package.metadata.serviceable | Should -Be $null
-		}
-		It 'icon' {
-			$nuspecXml.package.metadata.icon | Should -Be $null
-		}
-		It 'readme' {
-			$nuspecXml.package.metadata.readme | Should -Be $null
-		}
-		It 'repository' {
-			$nuspecXml.package.metadata.repository | Should -Be $null
-		}
-		It 'repository' {
-			$nuspecXml.package.metadata.repository | Should -Be $null
-		}
-		It 'license' {
-			$nuspecXml.package.metadata.license | Should -Be $null
-		}
-		It 'packageTypes' {
-			$nuspecXml.package.metadata.packageTypes | Should -Be $null
-		}
-		It 'frameworkAssemblies' {
-			$nuspecXml.package.metadata.frameworkAssemblies | Should -Be $null
-		}
-		It 'frameworkReferences' {
-			$nuspecXml.package.metadata.frameworkReferences | Should -Be $null
-		}
-		It 'references' {
-			$nuspecXml.package.metadata.references | Should -Be $null
-		}
-		It 'contentFiles' {
-			$nuspecXml.package.metadata.contentFiles | Should -Be $null
-		}
+		
 		AfterAll {
 			Remove-Item `
 				-Path $ManifestPath, $NuspecPath `
@@ -232,6 +187,7 @@ Describe 'Generated nuspec contains the right data' {
 				-ErrorAction Ignore
 		}
 	}
+
 	Describe 'Generated nuspec contains the specified author' {
 		BeforeAll {
 			$ManifestPath = 'TestDrive:\foo.psd1'
